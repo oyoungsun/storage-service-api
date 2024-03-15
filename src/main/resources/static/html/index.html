@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png" type="image/png"/>
+    <title>MOKI</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+<div id="wrap">
+    <main>
+        <aside> <!-- 사이드바 메뉴 -->
+            <img id="logo" src="https://kioskmanager.co.kr/download/img/moki_logo.png" alt="logo">
+            <div class="aside-btn aside-btn-current" id="MenuVersion">
+                <p>키오스크 버전<br>조회하기</p>
+            </div>
+            <div class="aside-btn" id="MenuBusiness">
+                <p>비즈니스 정보<br>조회하기</p>
+            </div>
+        </aside>
+        <section>
+            <nav></nav>
+            <header>
+                <div class="header-title">
+                    <h2>키오스크 버전 정보</h2>
+                </div>
+                <div class="frame"> <!-- 검색 메뉴 -->
+                    <div class="frame-upper"> <!-- 검색 모드 선택 -->
+                        <div>
+                            <h3>검색창</h3>
+                        </div>
+                        <div class="frame-btn">
+                            <select id="searchMod">
+                                <option value="packageName">패키지명</option>
+                                <option value="type">타입</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="frame-lower"> 
+                            <select id="searchBox">
+                                <option value="all">전체보기</option>
+                            </select>
+                    </div>
+                </div>
+            </header>
+            <nav class="border"></nav>
+            <article>
+                <div class="scroll">
+                </div>
+                <div class="add-btn">
+                    <h5>추가하기</h5>
+                    <img src="../../img/add.svg" alt="new-btn" title="추가하기">
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <div class="modal">
+        <div class="dialog">
+            <div class="dialog-header">
+                <h2>메인 버전 변경</h2>
+            </div>
+            <div class="dialog-section">
+                <div class="info-box">
+                    <p>키오스크 타입 : </p>
+                    <input type="text" id="inputKioskType" value="" readonly>
+                </div>
+                <div class="info-box">
+                    <p>패키지명 : </p>
+                    <input type="text" id="inputPackageName" value="" readonly>
+                </div>
+                <div class="info-box">
+                    <p>릴리즈 노트 : </p>
+                    <input type="text" id="inputReleaseNote" value="" readonly>
+                </div>
+                <div class="info-box">
+                    <p>버전 : </p>
+                    <select id="inputVersion"></select>
+                </div>
+                <div class="info-box-lower">
+                    <div class="info-box-btn" id="btnCancel">
+                        <p>취소</p>
+                    </div>
+                    <div class="info-box-btn" id="btnSave">
+                        <p>적용</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-check"> <!-- 정보 조회 모달 -->
+        <div class="dialog-check">
+            <div class="dialog-header">
+                <h2 id="checkTitle">키오스크 정보 조회</h2>
+                <img src="../../img/close.svg" alt="close-btn" class="btnClose">
+            </div>
+            <div class="dialog-scroll"></div>
+        </div>
+    </div>
+
+
+    <div class="modal-upload"> <!-- apk 업로드 모달-->
+        <div class="dialog-check">
+            <div class="dialog-header">
+                <h2>APK 업로드</h2>
+                <img src="../../img/close.svg" alt="close-btn" class="btnClose">
+            </div>
+            <form id="uploadForm" >
+                <div>
+                    <label for="uploadKioskType">키오스크 타입 : </label>
+                    <input type="text" id="uploadKioskType" name="kioskType" readonly style="border-color: transparent;">
+                </div>
+                <div>
+                    <label for="uploadPackageName">패키지 이름 : </label>
+                    <input type="text" id="uploadPackageName" name="package" readonly style="border-color: transparent;">
+                </div>
+                <div>
+                    <label for="uploadFile">파일 업로드 : </label>
+                    <input type="file" id="uploadFile" name="file" accept=".apk">
+                </div>
+                <div>
+                    <label for="uploadRelease">릴리즈 노트 : </label>
+                    <input type="text" id="uploadRelease" name="release">
+                </div>
+                <div>
+                    <label for="uploadVersion">버전 이름 : </label>
+                    <input type="text" id="uploadVersion" name="version">
+                </div>
+            </form>
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 24px;">
+                <div id="btnUpload">
+                    <img src="../../img/upload2.svg" alt="upload-btn" title="업로드하기">
+                    <p>업로드하기</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-create">  <!-- 키오스크 타입 생성 모달-->
+        <div class="dialog-create">
+            <div class="dialog-header">
+                <h2>키오스크 타입 생성</h2>
+                <img src="../../img/close.svg" alt="close-btn" class="btnClose">
+            </div>
+            <form id="createForm">
+                <div>
+                    <label for="createKioskType">키오스크 타입 : </label>
+                    <input type="text" id="createKioskType" name="kioskType" >
+                </div>
+                <div>
+                    <label for="createPackageName">패키지 이름 : </label>
+                    <input type="text" id="createPackageName" name="packageName" >
+                </div>
+                <div>
+                    <label for="createFile">파일 업로드 : </label>
+                    <input type="file" id="createFile" name="file" accept=".apk">
+                </div>
+                <div>
+                    <label for="createRelease">릴리즈 노트 : </label>
+                    <input type="text" id="createRelease" name="releaseNote">
+                </div>
+                <div>
+                    <label for="createVersion">버전 이름 : </label>
+                    <input type="text" id="createVersion" name="version">
+                </div>
+            </form>
+
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 24px;">
+                <div id="btnCreate">
+                    <img src="../../img/upload2.svg" alt="create-btn" title="업로드하기">
+                    <p>업로드하기</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+                <div class="progress-text">0%</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+
+        //페이지에 접근했을 때 모든 키오스크 버전을 출력한다
+
+        const kioskDataInit = () =>{
+            $.ajax({
+            type: "GET",
+            url: "../../api/kiosk/info",
+            contentType: "application/json",
+            dataType: "json",
+            success: res => {
+                console.log(res);
+
+                const kioskArray = res.result;
+                const kioskWrap = $(".scroll");
+                const searchBox = $("#searchBox");
+
+                kioskWrap.empty();
+                searchBox.empty();
+
+                searchBox.append(`<option value="all">전체보기</option>`);
+                
+                for (let i = 0; i < kioskArray.length; i++) {
+                    kioskWrap.append(`
+                        <div class="scroll-items" data-type="${kioskArray[i].kioskType}" data-package="${kioskArray[i].packageName}" data-release="${kioskArray[i].releaseNote}" data-version="${kioskArray[i].version}">
+                            <img src="../../img/ed-o-neil-AvvdZlhDowA-unsplash.png" alt="scroll-img">
+                            <div class="scroll-items-content">
+                                <h4 class="kioskType">키오스크 타입 : ${kioskArray[i].kioskType}</h4>
+                                <h4 class="packageName">패키지명 : ${kioskArray[i].packageName}</h4>
+                                <h4 class="releaseNote">릴리즈 노트 : ${kioskArray[i].releaseNote}</h4>
+                                <h4 class="version">버전 : ${kioskArray[i].version}</h4>
+                            </div>
+
+                            <div class="scroll-items-update">
+                                <h5>업데이트 날짜 :  ${kioskArray[i].modifiedAt}</h5>
+                                <div class="scroll-items-update-modify">
+                                    <div class="scroll-items-update-check-btn" id="btnCheck">
+                                        <img src="../../img/book.svg" alt="check-btn" title="조회하기">
+                                    </div>
+                                    <div class="scroll-items-update-upload-btn">
+                                        <img src="../../img/upload.svg" alt="upload-btn" title="업로드하기">
+                                    </div>
+                                    <div class="scroll-items-update-modify-btn" id="btnModify">
+                                        <img src="../../img/edit.svg" alt="edit-btn" title="수정하기">
+                                    </div>
+                                    <div class="scroll-items-update-delete-btn delete-btn" id="btnDelete">
+                                        <img src="../../img/delete.svg" alt="delete-btn" title="삭제하기">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    searchBox.append(`<option value="${kioskArray[i].packageName}">${kioskArray[i].packageName}</option>`);
+                }
+            },
+            error: res => {
+                console.log(res);
+            }
+            });
+        }
+
+        kioskDataInit();
+
+        $("#searchMod").on("change",function(e){
+
+            const type = $(this).val();
+            const searchBox = $("#searchBox");
+
+            $.ajax({
+                type: "GET",
+                url: "../../api/kiosk/info",
+                contentType: "application/json",
+                dataType: "json",
+                success : res => {
+                    const kioskArray = res.result;
+
+                    searchBox.empty();
+                    searchBox.append(`<option value="all">전체보기</option>`);
+
+                    for (let i = 0; i < kioskArray.length; i++) {
+                        if(type == "packageName")
+                        searchBox.append(`<option value="${kioskArray[i].packageName}">${kioskArray[i].packageName}</option>`);
+                        else
+                        searchBox.append(`<option value="${kioskArray[i].kioskType}">${kioskArray[i].kioskType}</option>`);
+                    }
+
+                    $("#searchBox").trigger("change");
+                },
+                error : res => {
+                    console.log(res);
+                }
+            });
+
+        });
+
+
+        /* 사이드바 메뉴 링크 */
+        $("#MenuVersion").on("click", function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+        $("#MenuBusiness").on("click", function (e) {
+            e.preventDefault();
+            location.href = "business";
+        });
+
+
+        /* 모달 저장하기 버튼 */
+        $("#btnSave").on("click", function (e) {
+            e.preventDefault();
+            let jsonData = {
+                "kioskType": $("#inputKioskType").val(),
+                "packageName": $("#inputPackageName").val(),
+                "releaseNote": "",
+                "version": $("#inputVersion").val(),
+            };
+
+            console.log(jsonData);
+
+            let kioskType = $("#inputKioskType").val();
+            
+            $.ajax({
+                type: "PUT",
+                url: `../../api/kiosk/change-version/${kioskType}`,
+                contentType: "application/json",
+                data: JSON.stringify(jsonData),
+                dataType: "json",
+                success: res => {
+                    console.log(res);
+                    alert("저장되었습니다.");
+                    location.reload();                    
+                },
+                error: res => {
+                    alert("오류가 발생했습니다. (" + res.status + ")");
+                    console.log(res);
+                }
+            });
+        });
+        /* 모달 취소하기 버튼 */
+        $("#btnCancel").on("click", function (e) {
+            e.preventDefault();
+            $(".modal").css("display", "none");
+        });
+        /* 모달 닫기 버튼 */
+        $(".btnClose").on("click", function (e) {
+            e.preventDefault();
+            $(".dialog-scroll").empty();
+            $(".modal-check").css("display", "none");
+
+            $(".modal-upload").css("display", "none");
+
+            $(".modal-create").css("display", "none");
+
+        });
+
+        /* apk 업로드할때 apk 파일만 허용하기 */
+        $('#uploadFile').on('change', function (e) {
+            e.preventDefault();
+            let fileName = $(this).val();
+            if (!fileName.endsWith('.apk')) {
+                alert('.apk 파일만 등록 가능합니다.');
+                $(this).val('');
+            }
+        });
+    });
+
+    /* 수정하기 버튼 */
+    $(document).on("click", ".scroll-items-update-modify-btn", function (e) {
+        e.preventDefault();
+
+        let currentType = $(this).closest($(".scroll-items")).data("type");
+        $.ajax({
+            type : "GET",
+            url : `../../api/kiosk/info/${currentType}`,
+            contentType : "application/json",
+            dataType : "json",
+            success: res => {
+                console.log(res);
+                const kioskInfo = res.result.kioskInfo;
+                $("#inputKioskType").val(`${kioskInfo.kioskType}`);
+                $("#inputPackageName").val(`${kioskInfo.packageName}`);
+                $("#inputReleaseNote").val(`${kioskInfo.releaseNote}`);
+
+                const kioskArray = res.result.versionInfos;
+                const kioskWrap = $("#inputVersion");
+                kioskWrap.empty();
+                kioskWrap.append(`
+                            <option value="${kioskInfo.version}" data-release="${kioskInfo.releaseNote}">${kioskInfo.version}</option>
+                        `);
+                for (let i = 0; i < kioskArray.length; i++) {
+                    if(kioskArray[i].version != kioskInfo.version) {
+                    kioskWrap.append(`
+                            <option value="${kioskArray[i].version}" data-release="${kioskArray[i].releaseNote}">${kioskArray[i].version}</option>
+                        `);}}
+                $("#inputVersion").val(`${kioskInfo.version}`);
+            },
+            error : res => {
+                console.log(res);
+                alert("불러오는 과정에서 오류가 발생했습니다.");
+            }
+        });
+        $(".modal").fadeIn();
+        $(".modal").css("display", "flex");
+    });
+
+    /* 삭제하기 버튼 */
+    $(document).on("click", ".scroll-items-update-delete-btn", function (e) {
+        e.preventDefault();
+
+        if( confirm("정말 삭제하시겠습니까? 등록된 사업자 번호가 함께 삭제됩니다.")){
+            
+            let currentType = $(this).closest($(".scroll-items")).data("type");
+
+            console.log(currentType);
+
+            $.ajax({
+                type : "DELETE",
+                url : `../../api/kiosk/info/${currentType}`,
+                success : res => {
+                    alert("삭제되었습니다.");
+                    location.reload();
+                },
+                error : res => {
+                    console.log(res);
+                }
+            });
+        }
+    });
+    /* 조회하기 버튼 */
+    $(document).on("click", ".scroll-items-update-check-btn", function (e) {
+        e.preventDefault();
+        let currentType = $(this).closest($(".scroll-items")).data("type");
+        $("#checkTitle").text("키오스크 정보 조회 (" + currentType + ")");
+        $(".modal-check").fadeIn();
+        $(".modal-check").css("display", "flex");
+        $.ajax({
+            type : "GET",
+            url : `../../api/kiosk/info/${currentType}`,
+            contentType : "application/json",
+            dataType : "json",
+            success: res => {
+                console.log(res);
+                const kioskArray = res.result.versionInfos;
+                const kioskWrap = $(".dialog-scroll");
+                kioskWrap.empty();
+                const mainVersion = res.result.kioskInfo;
+                kioskWrap.append(`
+                        <div class="scroll-items" data-type="${currentType}" data-version="${mainVersion.version}" data-releaseNote="${mainVersion.releaseNote}" data-package="${mainVersion.packageName}">
+                            <div class="scroll-items-content">
+                                <h4 class="version">버전명 : <span>${mainVersion.version}</span></h4>
+                                <h4 class="releaseNote">릴리즈 노트 : <input type="text" value="${mainVersion.releaseNote}"/></h4>
+                            </div>
+                            <div class="scroll-items-update">
+                                <div></div>
+                                <div class="scroll-items-update-modify">
+                                    <div class="dialog-scroll-download-btn">
+                                        <img src="../../img/download.svg" alt="download-btn" title="다운로드">
+                                    </div>
+                                    <div class="dialog-scroll-note-btn">
+                                        <img src="../../img/edit.svg" alt="note-btn" title="릴리즈노트 수정하기">
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                for (let i = 0; i < kioskArray.length; i++) {
+                    if(kioskArray[i].version !== mainVersion.version) {
+                    kioskWrap.append(`
+                        <div class="scroll-items" data-type="${currentType}" data-version="${kioskArray[i].version}" data-releaseNote="${kioskArray[i].releaseNote}" data-package="${kioskArray[i].packageName}">
+                            <div class="scroll-items-content">
+                                <h4 class="version">버전명 : <span>${kioskArray[i].version}</span></h4>
+                                <h4 class="releaseNote">릴리즈 노트 : <input type="text" value="${kioskArray[i].releaseNote}"/></h4>
+                            </div>
+                            <div class="scroll-items-update">
+                                <div></div>
+                                <div class="scroll-items-update-modify">
+                                    <div class="dialog-scroll-download-btn">
+                                        <img src="../../img/download.svg" alt="download-btn" title="다운로드">
+                                    </div>
+                                    <div class="dialog-scroll-note-btn">
+                                        <img src="../../img/edit.svg" alt="note-btn" title="릴리즈노트 수정하기">
+                                    </div>
+                                    <div class="dialog-scroll-delete-btn">
+                                        <img src="../../img/delete.svg" alt="delete-btn" title="삭제하기">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            `);}}
+            },
+            error : res => {
+                console.log(res);
+            }
+        });
+    });
+
+    /* 정보 수정 모달에서 버전 선택에 따라 릴리즈 노트 변경하는 스크립트 */
+    $(document).on("change","#inputVersion",function(e){
+        for(let i = 0; i < $(this).children("option").length; i++){
+            if($($(this).children("option")[i]).val() == $(this).val()){
+                $("#inputReleaseNote").val($($(this).children("option")[i]).data("release"));
+                return;
+            }
+        }
+    });
+
+    /* 업로드 버튼 */
+    $(document).on("click", ".scroll-items-update-upload-btn", function (e) {
+        e.preventDefault();
+        $("#uploadFile").val("");
+        $("#uploadRelease").val("");
+        $("#uploadVersion").val("");
+        $(".modal-upload").fadeIn();
+        $(".modal-upload").css("display", "flex");
+        const parent = $(this).closest($(".scroll-items"));
+        $("#uploadKioskType").val(parent.data("type"));
+        $("#uploadPackageName").val(parent.data("package"));
+        $("#uploadRelease").attr("placeholder",parent.data("release"));
+        $("#uploadVersion").attr("placeholder",parent.data("version"));
+    });
+
+    /* 업로드하기 */
+    $(document).on("click", "#btnUpload", function (e) {
+        e.preventDefault();
+        const form = $('#uploadForm')[0];
+        const formData = new FormData(form);
+        //console.log($('#uploadForm').serialize());
+
+        if(!$("#uploadFile").val()){
+            alert("파일을 업로드 해주세요!");
+            return;
+        }
+
+        if($("#uploadRelease").val() == ""){
+            alert("릴리즈 노트를 작성해주세요.");
+            return;
+        }
+
+        if($("#uploadVersion").val() == ""){
+            alert("버전을 작성해주세요.");
+            return;
+        }
+
+        if($("#uploadVersion").val() == $("#uploadVersion").attr("placeholder")){
+            alert("다른 버전명을 입력해주세요.");
+            return;
+        }
+
+
+
+        $(".modal-overlay").css("display","flex");
+        $(".progress-text").css("display","block");
+
+        $.ajax({
+            type:"POST",
+            enctype:'multipart/form-data',
+            url:'../../api/upload',
+            data:formData,
+            dataType:'json',
+            processData:false,
+            contentType:false,
+            cache:false,
+            xhr : () =>{
+                let xhr = $.ajaxSettings.xhr();
+                xhr.upload.onprogress = function(e){
+				    let per = e.loaded * 100 / e.total;
+                    $(".progress-text").text(per.toFixed(1) + "%");
+				};
+				return xhr;
+            },
+            success:function(data){
+                console.log("success : ", data);
+                alert("업로드가 완료되었습니다.");
+                location.reload();
+            },
+            error:function(e){
+                console.log("error : ", e);
+                alert("업로드 과정에서 오류가 발생했습니다.");
+                $(".modal-overlay").css("display","none");
+                $(".progress-text").css("display","none");
+                $(".progress-text").text("0%");
+
+            }
+        });
+    });
+
+    //키오스크 정보조회 버전별 다운로드 버튼
+    $(document).on("click", ".dialog-scroll-download-btn", function (e) {
+
+        e.preventDefault();
+        const currentType = $(this).closest($(".scroll-items")).data("type");
+        const currentVersion = $(this).closest($(".scroll-items")).data("version");
+
+
+        window.open(`../../api/kiosk/info/${currentType}/${currentVersion}`,"target='_blank'","");
+
+    });
+
+
+    //키오스크 정보조회 버전별 삭제 버튼
+    $(document).on("click",".dialog-scroll-delete-btn", function(e){
+
+        e.preventDefault();
+        const currentType = $(this).closest($(".scroll-items")).data("type");
+        const currentVersion = $(this).closest($(".scroll-items")).data("version");
+
+        $.ajax({
+            type : "DELETE",
+            url : `../../api/kiosk/info/${currentType}/${currentVersion}`,
+            contentType : "application/json",
+            dataType : "json",
+            success : res => {
+                console.log(res);
+                alert("삭제되었습니다.");
+                location.reload();
+            },
+            error : res => {
+                console.log(res);
+            }
+        });
+    })
+
+    //키오스크 정보조회 수정 버튼
+    $(document).on("click",".dialog-scroll-note-btn", function (e) {
+        const currentType = $(this).closest($(".scroll-items")).data("type");
+        const currentVersion = $(this).closest($(".scroll-items")).data("version");
+        const packageName =  $(this).closest($(".scroll-items")).data("package");
+        const oldReleaseNote = $(this).closest($(".scroll-items")).data("releasenote");
+        const currentReleaseNote = $(this).closest(".scroll-items").find(".releaseNote").find("input").val();
+
+        if(oldReleaseNote == currentReleaseNote){
+            alert("릴리즈 노트가 변경되지 않았습니다.");
+            return;
+        }
+
+        if(currentReleaseNote == ""){
+            alert("릴리즈 노트를 입력해주세요.");
+            return;
+        }
+
+        if(confirm("릴리즈 노트를 변경하시겠습니까?")){
+
+            let jsonData = {
+                "kioskType": currentType,
+                "packageName": packageName,
+                "releaseNote": currentReleaseNote,
+                "version": currentVersion,
+            };
+
+            $.ajax({
+                type : "PUT",
+                url : `../../api/kiosk/change-version/${currentType}`,
+                contentType : "application/json",
+                dataType : "json",
+                data : JSON.stringify(jsonData),
+                success : res => {
+                    console.log(res);
+                    alert("변경되었습니다.");
+                    location.reload();
+                },
+                error : res => {
+                    console.log(res);
+                }
+            });
+        }else{
+            $(this).closest(".scroll-items").find(".releaseNote").find("input").val(oldReleaseNote);
+        }
+
+    });
+
+    //왼쪽하단 추가버튼
+    $(".add-btn").on("click",function(e){
+        e.preventDefault();
+        $("#createKioskType").val("");
+        $("#createPackageName").val("");
+        $("#createFile").val("");
+        $("#createRelease").val("");
+        $("#createVersion").val("");
+        $(".modal-create").css("display","flex");
+    });
+
+    $("#btnCreate").on("click",function(e){
+        e.preventDefault();
+        const intputType = $("#createKioskType").val();
+        const inputPackageName = $("#createPackageName").val();
+        const inputFile = $("#createFile").val();
+        const inputRelease = $("#createRelease").val();
+        const inputVersion = $("#createVersion").val();
+
+        const form = $('#createForm')[0];
+        const formData = new FormData(form);
+
+        if(intputType == ""){
+            alert("타입을 입력해주세요");
+            return;
+        }
+
+        if(inputPackageName == ""){
+            alert("타입을 입력해주세요");
+            return;
+        }
+
+        if(!inputFile){
+            alert("파일을 선택해주세요.");
+            return;
+        }
+
+        if(inputRelease == ""){
+            alert("릴리즈 노트를 입력해주세요");
+            return;
+        }
+
+        if(inputVersion == ""){
+            alert("버전을 입력해주세요");
+            return;
+        }
+
+        $(".modal-overlay").css("display","flex");
+        $(".progress-text").css("display","block");
+
+        $.ajax({
+            type:"POST",
+            enctype:'multipart/form-data',
+            url:'../../api/kiosk/info',
+            data:formData,
+            dataType:'json',
+            processData:false,
+            contentType:false,
+            cache:false,
+            xhr : () =>{
+                let xhr = $.ajaxSettings.xhr();
+                xhr.upload.onprogress = function(e){
+				    let per = e.loaded * 100 / e.total;
+                    $(".progress-text").text(per.toFixed(1) + "%");
+				};
+				return xhr;
+            },
+            success:function(data){
+                console.log("success : ", data);
+                alert("등록이 완료되었습니다.");
+                location.reload();
+            },
+            error:function(e){
+                console.log("error : ", e);
+                alert("업로드 과정에서 오류가 발생했습니다.");
+                $(".modal-overlay").css("display","none");
+                $(".progress-text").css("display","none");
+                $(".progress-text").text("0%");
+
+            }
+        });
+    });
+
+    $("#searchBox").on("change",function(){
+
+        const type = $("#searchMod").val();
+        const data = $("#searchBox").val();
+
+        $.ajax({
+            type: "GET",
+            url: "../../api/kiosk/info",
+            contentType: "application/json",
+            dataType: "json",
+            success: res => {
+                console.log(res);
+
+                const kioskArray = res.result;
+                const kioskWrap = $(".scroll");
+                const searchBox = $("#searchBox");
+
+                kioskWrap.empty();
+
+                for (let i = 0; i < kioskArray.length; i++) {
+
+                    if( (type == "packageName" && data == kioskArray[i].packageName ) || 
+                        (type == "type" && data == kioskArray[i].kioskType ) || 
+                         data == "all"){
+                        kioskWrap.append(`
+                        <div class="scroll-items" data-type="${kioskArray[i].kioskType}" data-package="${kioskArray[i].packageName}" data-release="${kioskArray[i].releaseNote}" data-version="${kioskArray[i].version}">
+                            <img src="../../img/ed-o-neil-AvvdZlhDowA-unsplash.png" alt="scroll-img">
+                            <div class="scroll-items-content">
+                                <h4 class="kioskType">키오스크 타입 : ${kioskArray[i].kioskType}</h4>
+                                <h4 class="packageName">패키지명 : ${kioskArray[i].packageName}</h4>
+                                <h4 class="releaseNote">릴리즈 노트 : ${kioskArray[i].releaseNote}</h4>
+                                <h4 class="version">버전 : ${kioskArray[i].version}</h4>
+                            </div>
+
+                            <div class="scroll-items-update">
+                                <h5>업데이트 날짜 :  ${kioskArray[i].modifiedAt}</h5>
+                                <div class="scroll-items-update-modify">
+                                    <div class="scroll-items-update-check-btn" id="btnCheck">
+                                        <img src="../../img/book.svg" alt="check-btn" title="조회하기">
+                                    </div>
+                                    <div class="scroll-items-update-upload-btn">
+                                        <img src="../../img/upload.svg" alt="upload-btn" title="업로드하기">
+                                    </div>
+                                    <div class="scroll-items-update-modify-btn" id="btnModify">
+                                        <img src="../../img/edit.svg" alt="edit-btn" title="수정하기">
+                                    </div>
+                                    <div class="scroll-items-update-delete-btn delete-btn" id="btnDelete">
+                                        <img src="../../img/delete.svg" alt="delete-btn" title="삭제하기">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    }
+
+                    //searchBox.append(`<option value="${kioskArray[i].packageName}">${kioskArray[i].packageName}</option>`);
+                }
+            },
+            error: res => {
+                console.log(res);
+            }
+        });
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css?ver=171222">
+    <link rel="stylesheet" href="/css/login.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png" type="image/png"/>
+    <title>MOKI</title>
+</head>
+
+<body>
+    <div id="loginWrap">
+        <main>
+            <img src="https://kioskmanager.co.kr/download/img/moki_logo.png" alt="logo">
+
+            <h2 class="titleText">모키 키오스크 업데이트 관리자</h2>
+            <p>403ERROR : 로그인이 실패하여 이메일로 랜덤 비밀번호가 대표님의 이메일로 발송되었습니다.</p>
+            <button id="loginButton">로그인 화면으로</button>
+        </main>
+    </div>
+
+</div>
+</body>
+<script>
+    $(document).ready(function() {
+        $("#loginButton").on("click", function (e) {
+            e.preventDefault();
+            location.href = "../kiosk_update/admin/login";
+        });
+    });
+</script>
+
+</html>

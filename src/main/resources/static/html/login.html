@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css?ver=171222">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png" type="image/png"/>
+    <title>MOKI</title>
+</head>
+<body>
+    <div id="loginWrap">
+        <main>
+            <img src="https://kioskmanager.co.kr/download/img/moki_logo.png" alt="logo">
+            
+            <h2 class="titleText">모키 키오스크 업데이트 관리자</h2>
+            <form class="form-signin" method="post" action="/kiosk_update/admin/login">
+                <p>아이디</p>
+<!--                <input type="text" name="input-id" id="inputId" class="input-text" placeholder="아이디를 입력해주세요." maxlength="10" autocomplete='off' required autofocus/>-->
+<!--                <p class="password-top-text">비밀번호</p>-->
+<!--                <input type="password" name="input-pw" id="inputPw" class="input-text" placeholder="비밀번호를 입력해주세요." maxlength="10" autocomplete='off' required/>-->
+<!--                <button type="submit" id="loginButton">로그인</button>-->
+                <input type="text" id="inputId" class="input-text" name="username" placeholder="아이디를 입력해주세요." maxlength="10" autocomplete='off' required autofocus/>
+                <p class="password-top-text">비밀번호</p>
+                <input type="password" id="inputPw" class="input-text" name="password" placeholder="비밀번호를 입력해주세요." maxlength="10" autocomplete='off' required/>
+                <button type="submit" id="loginButton">로그인</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/business.css">
+    <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/5edb38_39e2c8efa4704edaba8b2597f905a317%7Emv2.png" type="image/png"/>
+    <title>MOKI</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+<div id="wrap">
+    <main>
+        <aside> <!-- 사이드바 메뉴 -->
+            <img id="logo" src="https://kioskmanager.co.kr/download/img/moki_logo.png" alt="logo">
+            <div class="aside-btn" id="MenuVersion">
+                <p>키오스크 버전<br>조회하기</p>
+            </div>
+            <div class="aside-btn aside-btn-current" id="MenuBusiness">
+                <p>비즈니스 정보<br>조회하기</p>
+            </div>
+        </aside>
+        <section>
+            <nav></nav>
+            <header>
+                <div class="header-title">
+                    <h2>비즈니스 정보</h2>
+                </div>
+                <div class="frame"> <!-- 검색 메뉴 -->
+                    <div class="frame-upper"> <!-- 검색 모드 선택 -->
+                        <div>
+                            <h3>검색창</h3>
+                        </div>
+                        <div class="frame-btn">
+                            <select id="searchMod">
+                                <option value="busiNum">사업자번호</option>
+                                <option value="type">타입</option>
+                            </select>
+                        </div>
+                        <div class="frame-radio">
+                            <div>
+                                <input type="radio" id="radioSort1" name="sort" value="asc" checked="checked">오름차순
+                                <input type="radio" id="radioSort2" name="sort" value="desc">내림차순
+                            </div>
+                            <div>
+                                <input type="radio" id="radioSort3" name="sort" value="new">최신순　
+                                <input type="radio" id="radioSort4" name="sort" value="old">오래된순
+                            </div>
+                        </div>
+                    </div>
+                    <div class="frame-lower"> <!-- 검색창 -->
+                        <select id="searchBox">
+                            <option value="all">전체보기</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+            <nav class="border"></nav>
+            <article>
+                <div class="scroll"></div>
+                <div class="add-btn">
+                    <h5>추가하기</h5>
+                    <img src="../../img/add.svg" alt="new-btn" title="추가하기">
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <div class="modal"> <!-- 정보 수정 모달 -->
+        <div class="dialog">
+            <div class="dialog-header">
+                <h2>비즈니스 정보 수정</h2>
+            </div>
+            <div class="dialog-section">
+                <div class="info-box">
+                    <p>사업자번호 : </p>
+                    <input type="text" id="inputBusiNum" value="" readonly>
+                </div>
+                <div class="info-box">
+                    <p>키오스크 타입 : </p>
+                    <select id="inputKioskType"></select>
+                </div>
+                <div class="info-box hidden">
+                    <input type="text" id="inputBusinessInfoId" value="" readonly>
+                </div>
+                <div class="info-box hidden"></div>
+                <div class="info-box-lower">
+                    <div class="info-box-btn btnCancel">
+                        <p>취소하기</p>
+                    </div>
+                    <div class="info-box-btn" id="btnSave">
+                        <p>저장하기</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-add"> <!-- 정보 추가 모달 -->
+        <div class="dialog">
+            <div class="dialog-header">
+                <h2>비즈니스 정보 추가</h2>
+            </div>
+            <div class="dialog-section">
+                <div class="info-box">
+                    <p>사업자번호 : </p>
+                    <input type="text" id="newBusiNum" value="">
+                </div>
+                <div class="info-box">
+                    <p>키오스크 타입 : </p>
+                    <select id="newKioskType"></select>
+                </div>
+                <div class="info-box hidden"></div>
+                <div class="info-box hidden"></div>
+                <div class="info-box-lower">
+                    <div class="info-box-btn btnCancel">
+                        <p>취소하기</p>
+                    </div>
+                    <div class="info-box-btn" id="btnRegister">
+                        <p>등록하기</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+
+        /* 받아온 배열을 정렬하는 함수 */
+        const sortArray = (arr) => {
+            let sortOption = $("input[name=sort]:checked").val();
+            if(sortOption == "asc"){
+                arr.sort((a,b) => a.businessNumber - b.businessNumber);
+            }
+            else if(sortOption == "desc"){
+                arr.sort((a,b) => b.businessNumber - a.businessNumber);
+            }
+            else if(sortOption == "old"){
+                arr.sort((a,b) => a.businessInfoId - b.businessInfoId);
+            }
+            else{
+                arr.sort((a,b) => b.businessInfoId - a.businessInfoId);
+            }
+        }
+
+        /* 비즈니스 정보 API 받아오는 함수 */
+        const busiInfo = (isInit) => {
+            $.ajax({
+                type: "GET",
+                url: "../../api/business/info",
+                contentType: "application/json",
+                dataType: "json",
+                success: res => {
+                    const busiArray = res.result;
+                    const busiWrap = $(".scroll");
+
+                    busiWrap.empty();
+                    sortArray(busiArray);
+
+                    let keyword = $("#searchBox").val();
+                    let searchMod = $('#searchMod').val();
+
+                    for (let i = 0; i < busiArray.length; i++) {
+                        if((searchMod == "busiNum" && keyword == `${busiArray[i].businessNumber}`)
+                            ||(searchMod == "type" && keyword == `${busiArray[i].kioskType}`)
+                            ||(keyword == "all")||(isInit)) {
+                            busiWrap.append(`
+                                <div class="scroll-items" data-businessInfoId="${busiArray[i].businessInfoId}" data-businum="${busiArray[i].businessNumber}" data-type="${busiArray[i].kioskType}">
+                                    <div class="scroll-items-content">
+                                        <h4 id="busiNum">사업자 번호 : ${busiArray[i].businessNumber}</h4>
+                                        <h4 id="kioskType">키오스크 타입 : ${busiArray[i].kioskType}</h4>
+                                        <h6 id="businessInfoId">${busiArray[i].businessInfoId}</h6>
+                                    </div>
+
+                                    <div class="scroll-items-update">
+                                        <div></div>
+                                        <div class="scroll-items-update-modify">
+                                            <div class="scroll-items-update-modify-btn">
+                                                <img src="../../img/edit.svg" alt="edit-btn">
+                                            </div>
+                                            <div class="scroll-items-update-delete-btn">
+                                                <img src="../../img/delete.svg" alt="delete-btn">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    `);
+                        }
+                        if(isInit){
+                            $("#searchBox").append(`
+                                <option value="${busiArray[i].businessNumber}">${busiArray[i].businessNumber}</option>
+                         `);
+                        }
+                    }
+                },
+                error: res => {
+                    console.log(res);
+                }
+            });
+        }
+        
+        /* 처음 페이지를 열었을 때 비즈니스 정보 불러오기 */
+        const busiInfoInit = () => {
+            busiInfo(true);
+        }
+        busiInfoInit();
+
+        /* 검색 스크립트 */
+        $("#searchBox").on("change", function (e) {
+            e.preventDefault();
+            busiInfo(false);
+        });
+
+        /* 사이드바 메뉴 링크 */
+        $("#MenuVersion").on("click", function (e) {
+            e.preventDefault();
+            location.href = "index";
+        });
+
+        $("#MenuBusiness").on("click", function (e) {
+            e.preventDefault();
+            location.reload();
+        });
+
+        /* 검색모드 바꾸면 검색창에 option 추가하는 함수 */
+        $("#searchMod").on("change", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "GET",
+                url: "../../api/business/info",
+                contentType: "application/json",
+                dataType: "json",
+                success: res => {
+                    console.log(res);
+                    const busiArray = res.result;
+                    $("#searchBox").empty();
+                    $("#searchBox").append(`
+                        <option value="all">전체보기</option>
+                    `);
+                    if($("#searchMod").val() == "busiNum") {
+                        for (let i = 0; i < busiArray.length; i++) {
+                            $("#searchBox").append(`
+                                <option value="${busiArray[i].businessNumber}">${busiArray[i].businessNumber}</option>
+                            `);
+                        }
+                    }
+                    else{
+                        for (let i = 0; i < busiArray.length; i++) {
+                            let isDuplicated=false;
+                            for (let j=0; j< i; j++){
+                                if(busiArray[i].kioskType == busiArray[j].kioskType) isDuplicated=true;
+                            }
+                            if(!isDuplicated){
+                                $("#searchBox").append(`
+                                    <option value="${busiArray[i].kioskType}">${busiArray[i].kioskType}</option>
+                                `);
+                            }
+                        }
+                    }
+                },
+                error: res => {
+                    console.log(res);
+                }
+            });
+            $("#searchBox").val("전체보기");
+            busiInfo(false);
+        });
+
+        /* 정렬 바꾸기 */
+        $("input[name=sort]").on("change", function(e) {
+            e.preventDefault();
+            busiInfo(false);
+        });
+
+        /* 모달 저장하기 버튼 */
+        $("#btnSave").on("click", function (e) {
+            e.preventDefault();
+            let businessInfoId = $("#inputBusinessInfoId").val();
+            $.ajax({
+                type: "PUT",
+                url: `../../api/business/${businessInfoId}`,
+                contentType: "application/json",
+                data: $("#inputKioskType").val(),
+                dataType: "json",
+                success: res => {
+                    console.log(res);
+                    alert("저장되었습니다.");
+                    location.reload();
+                },
+                error: res => {
+                    alert("오류가 발생했습니다. (" + res.status + ")");
+                    console.log(res);
+                }
+            });
+        });
+
+        /* 모달 취소하기 버튼 */
+        $(".btnCancel").on("click", function (e) {
+            e.preventDefault();
+            $(".modal").css("display", "none");
+            $(".modal-add").css("display", "none");
+        });
+
+        /* 모달 등록하기 버튼 */
+        $("#btnRegister").on("click", function (e) {
+            e.preventDefault();
+            if (/[^0-9]/.test($("#newBusiNum").val())) {
+                alert("사업자번호는 숫자만 입력 가능합니다.");
+                return;
+            }
+            if ($("#newBusiNum").val().length != 10) {
+                alert("사업자번호는 10자리의 숫자를 입력해야 합니다.");
+                return;
+            }
+            $.ajax({
+                type: "GET",
+                url: "../../api/business/info",
+                contentType: "application/json",
+                dataType: "json",
+                success: res => {
+                    const busiArray = res.result;
+                    let state = true;
+
+                    for(let i = 0; i < busiArray.length; i++) {
+                        if($("#newBusiNum").val() == busiArray[i].businessNumber){
+                            state = false;
+                        }
+                    }
+
+                    if(state){
+                        let jsonData = {
+                            "businessNumber" : $("#newBusiNum").val(),
+                            "kioskType": $("#newKioskType").val()
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "../../api/business/info/create",
+                            contentType: "application/json",
+                            data: JSON.stringify(jsonData),
+                            dataType: "json",
+                            success: res => {
+                                console.log(res);
+                                alert("등록이 완료되었습니다.");
+                                location.reload();
+                            },
+                            error: res => {
+                                alert("오류가 발생했습니다. (" + res.status + ")");
+                                console.log(res);
+                            }
+                        });
+                    }
+                    else{
+                        alert("사업자번호가 이미 존재합니다.");
+                    }
+
+                },
+                error: res => {
+                    console.log(res);
+                    alert("오류가 발생했습니다. (" + res.status + ")");
+                    return;
+                }
+            });
+        });
+
+        /* 추가하기 버튼 */
+        $(".add-btn").on("click", function (e) {
+            e.preventDefault();
+            $("#newBusiNum").val("");
+            $.ajax({
+                type: "GET",
+                url: "../../api/kiosk/info",
+                contentType: "application/json",
+                dataType: "json",
+                success: res => {
+                    console.log(res);
+                    const kioskArray = res.result;
+                    $("#newKioskType").empty();
+                    for (let i = 0; i < kioskArray.length; i++) {
+                        $("#newKioskType").append(`
+                        <option value="${kioskArray[i].kioskType}">${kioskArray[i].kioskType}</option>
+                    `);
+                    }
+                },
+                error: res => {
+                    console.log(res);
+                }
+            });
+            $(".modal-add").fadeIn();
+            $(".modal-add").css("display", "flex");
+        });
+    });
+
+    /* 수정하기 버튼 */
+    $(document).on("click", ".scroll-items-update-modify-btn", function (e) {
+        e.preventDefault();
+        const parent = $(this).closest($(".scroll-items"));
+        $("#inputBusiNum").val(parent.data("businum"));
+        $("#inputBusinessInfoId").val(parent.find('h6').text());
+        $.ajax({
+            type: "GET",
+            url: "../../api/kiosk/info",
+            contentType: "application/json",
+            dataType: "json",
+            success: res => {
+                console.log(res);
+                const kioskArray = res.result;
+                $("#inputKioskType").empty();
+                for (let i = 0; i < kioskArray.length; i++) {
+                    $("#inputKioskType").append(`
+                        <option value="${kioskArray[i].kioskType}">${kioskArray[i].kioskType}</option>
+                    `);
+                 }
+                $("#inputKioskType").val(parent.data("type"));
+            },
+            error: res => {
+                console.log(res);
+            }
+        });
+        $(".modal").fadeIn();
+        $(".modal").css("display", "flex");
+    });
+
+    /* 삭제하기 버튼 */
+    $(document).on("click", ".scroll-items-update-delete-btn", function (e) {
+        e.preventDefault();
+
+            const parent = $(this).closest($(".scroll-items"));
+            let businessInfoId = parent.find('h6').text();
+            console.log(businessInfoId);
+            $.ajax({
+                type: "DELETE",
+                url: `../../api/business/info/${businessInfoId}`,
+                success: res => {
+                    console.log(res);
+                    alert("삭제되었습니다.");
+                    location.reload();
+                    },
+                error: res => { alert("삭제 중에 오류가 발생했습니다. (" + res.status + ")"); }
+            });
+
+    });
+</script>
+
+</html>

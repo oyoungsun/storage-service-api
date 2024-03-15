@@ -1,0 +1,26 @@
+[
+  {
+    "kioskType": "NEW",
+    "version": "2.0.0",
+    "packageName": "com.moki.kiosk",
+    "releaseNote": "- 안정화 후 오후 반차"
+  },
+  {
+    "kioskType": "BASIC",
+    "version": "2.0.1",
+    "packageName": "com.moki.kiosk",
+    "releaseNote": "- 안정화 후 오후 반차"
+  },
+  {
+    "kioskType": "HAMMER",
+    "version": "2.0.3",
+    "packageName": "com.example.kioskmainpage",
+    "releaseNote": "- 안정화 후 오후 반차"
+  },
+  {
+    "kioskType": "MASS",
+    "version": "2.0.6",
+    "packageName": "com.moki.kiosk",
+    "releaseNote": "- 안정화 후 오후 반차"
+  }
+]

@@ -1,0 +1,3 @@
+[submodule "src/main/resources/setting"]
+	path = src/main/resources/setting
+	url = https://github.com/moki-develop-team/kiosk-update-server-sub.git
