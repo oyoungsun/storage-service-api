@@ -15,4 +15,14 @@ Kotlin, SpringBoot, MariaDB
 - 로그인 시도 10회 제한, 이메일 발송 기능
 - 키오스크 정보, 비지니스 정보 검색
 
-  
+## 배포 방법
+커멘드에서 다음 명령어를 실행
+```bash
+.\deploy.sh
+```
+### 로컬 서버 실행 시
+`kiosk-update-api/`에서 아래 커맨드 입력
+```bash
+bash local-server-start.sh
+```
+
