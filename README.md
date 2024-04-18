@@ -20,7 +20,6 @@ MariaDB, Gradle
 ## 아키텍쳐
 ![003.jpg](docs%2F003.jpg)
 ![004.jpg](docs%2F004.jpg)
-![005.jpg](docs%2F005.jpg)
 ## 배포 방법
 커멘드에서 다음 명령어를 실행
 ```bash
